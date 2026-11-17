@@ -8,6 +8,7 @@ from itsdangerous import BadSignature, URLSafeSerializer
 from app.config import Config
 from app.db import get_db, init_db
 from app.services import (
+    archive_overview_by_domain,
     execute_judgment,
     list_judgments,
     list_partitions,
@@ -15,6 +16,7 @@ from app.services import (
     list_reports,
     list_runs,
     list_scan_jobs,
+    list_snapshots,
     run_expire_scan,
     run_reconcile,
 )
@@ -107,7 +109,10 @@ def api_meta(request: Request):
 def api_policies(request: Request):
     require_user(request)
     with get_db() as conn:
-        return {"items": list_policies(conn, active_only=True)}
+        return {
+            "items": list_policies(conn, active_only=True),
+            "archive_overview": archive_overview_by_domain(conn),
+        }
 
 
 @app.get("/api/partitions")
@@ -159,6 +164,13 @@ def api_runs(request: Request):
     require_user(request)
     with get_db() as conn:
         return {"items": list_runs(conn)}
+
+
+@app.get("/api/archive-snapshots")
+def api_archive_snapshots(request: Request):
+    require_user(request)
+    with get_db() as conn:
+        return {"items": list_snapshots(conn)}
 
 
 @app.get("/api/reconcile-reports")

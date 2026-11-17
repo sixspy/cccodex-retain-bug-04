@@ -90,6 +90,19 @@ CREATE TABLE IF NOT EXISTS execute_runs (
   FOREIGN KEY(judgment_id) REFERENCES judgments(id)
 );
 
+CREATE TABLE IF NOT EXISTS archive_snapshots (
+  partition_id INTEGER PRIMARY KEY,
+  judgment_id INTEGER NOT NULL,
+  archive_uri TEXT NOT NULL,
+  domain_code TEXT NOT NULL,
+  biz_date TEXT NOT NULL,
+  row_count INTEGER NOT NULL,
+  content_digest TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY(partition_id) REFERENCES partitions(id),
+  FOREIGN KEY(judgment_id) REFERENCES judgments(id)
+);
+
 CREATE TABLE IF NOT EXISTS reconcile_reports (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   as_of_date TEXT NOT NULL,
